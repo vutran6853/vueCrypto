@@ -1,17 +1,32 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <Dashboard v-bind:currentPriceValue='currentPriceValueData'/>
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import Dashboard from './components/Dashboard.vue'
+import axios from 'axios';
+axios.defaults.headers.common['authorization'] = process.env.VUE_APP_CRYPTOCOMPARE_KEY
 
 export default {
   name: 'app',
   components: {
-    HelloWorld
+    Dashboard
+  },
+  data: function() {
+    return {
+     currentPriceValueData: {} 
+    }
+  },
+  ////  Vue lifecycle hooks
+  mounted: function() {
+    axios.get('https://min-api.cryptocompare.com/data/price?fsym=BTC&tsyms=USD,JPY,EUR')
+    .then((response) => {
+      // console.log(response.data)
+      this.currentPriceValueData = response.data
+    })
+    .catch((error) => console.log(`Danger Front-End error ${ error }`));
   }
 }
 </script>
